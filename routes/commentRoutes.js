@@ -1,7 +1,7 @@
 const router = require("express").Router()
-const { createComment } = require("../controllers/commentController")
+const { createComment, updateComment } = require("../controllers/commentController")
 
 router.route("/comment").post(createComment)
-
+router.route("/comment/:id").put(updateComment)
 
 module.exports = router

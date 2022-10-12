@@ -43,7 +43,36 @@ const updateComment = async (req, res) => {
     }
 }
 
+const deleteComment = async (req, res) => {
+    try {
+        const checkComment = await Comment.findById(req.params.id)
+        if(!checkComment) {
+            return res.status(404).json({msg: "id not found"})
+        }
+        await Comment.findByIdAndDelete(req.params.id)
+        res.status(200).json({msg: "comment deleted"})
+    } catch (error) {
+        res.status(500).json({ error })
+    }
+}
+
+//get comments by postId
+const getCommentsByPostId = async (req, res) => {
+    try {
+        const { postId } = req.params
+        const comments = await Comment.find({ postId })
+        if (!comments) {
+            return res.status(404).json({msg: "id not found"})
+        }
+        res.status(200).json({comments})
+    } catch (error) {
+        res.status(500).json({ error })
+    }
+}
+
 module.exports = {
     createComment,
     updateComment,
+    deleteComment,
+    getCommentsByPostId,
 }

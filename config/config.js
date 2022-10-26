@@ -1,7 +1,6 @@
 const mongoose = require("mongoose")
 require("dotenv").config()
 
-
 const connection = (connectionString) => {
     mongoose.connect(connectionString)
     .then(() => console.log("dbconnection working"))
@@ -10,7 +9,7 @@ const connection = (connectionString) => {
 
 const startConnection = async (listenPort) => {
     try {
-        await connection(process.env.MONGODB_URI)
+        await connection(process.env.MONGODB)
     } catch (error) {
         console.log(error)
     }

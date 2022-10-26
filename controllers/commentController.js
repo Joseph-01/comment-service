@@ -1,15 +1,22 @@
+require("dotenv").config()
+const articleUrl = process.env.ARTICLE_URL
 const Comment = require("../models/comment")
 const axios = require("axios")
 const axiosInstance = axios.create({
-    baseURL: "http://localhost:3000/"
+    baseURL: articleUrl
 })
 
 const createComment = async (req, res) => {
     try {
+        const header = req.headers.authorization
         const { postId, userId, comment } = req.body
         const userResponse = await axiosInstance({
             url: `users/${userId}`,
             method: "get",
+            headers: {
+                "authorization":
+                    header
+            }
         });
         const fName = userResponse.data.user.firstname + " " + userResponse.data.user.lastname
 
@@ -23,21 +30,21 @@ const createComment = async (req, res) => {
         const saveComment = await newComment.save()
         res.status(201).json({ saveComment })
     } catch (error) {
-        res.status(500).json({ error })
+        res.status(500).json(error.message)
     }
 }
 
 const updateComment = async (req, res) => {
     try {
         const { id: commentId } = req.params
-        const comment = await Comment.findOneAndUpdate({ id: commentId }, 
+        const comment = await Comment.findOneAndUpdate({ id: commentId },
             req.body, {
-                new: true
-            })
+            new: true
+        })
         if (!comment) {
-            return res.status(404).json({msg: "id not found"})
+            return res.status(404).json({ msg: "id not found" })
         }
-        res.status(200).json({comment})
+        res.status(200).json({ comment })
     } catch (error) {
         res.status(500).json({ error })
     }
@@ -46,11 +53,11 @@ const updateComment = async (req, res) => {
 const deleteComment = async (req, res) => {
     try {
         const checkComment = await Comment.findById(req.params.id)
-        if(!checkComment) {
-            return res.status(404).json({msg: "id not found"})
+        if (!checkComment) {
+            return res.status(404).json({ msg: "id not found" })
         }
         await Comment.findByIdAndDelete(req.params.id)
-        res.status(200).json({msg: "comment deleted"})
+        res.status(200).json({ msg: "comment deleted" })
     } catch (error) {
         res.status(500).json({ error })
     }
@@ -62,9 +69,9 @@ const getCommentsByPostId = async (req, res) => {
         const { postId } = req.params
         const comments = await Comment.find({ postId })
         if (!comments) {
-            return res.status(404).json({msg: "id not found"})
+            return res.status(404).json({ msg: "id not found" })
         }
-        res.status(200).json({comments})
+        res.status(200).json({ comments })
     } catch (error) {
         res.status(500).json({ error })
     }

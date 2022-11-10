@@ -201,8 +201,6 @@ const deleteComment = async (req, res) => {
  *   get:
  *     summary: Get all comments by post id
  *     tags: [Comment]
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: postId
